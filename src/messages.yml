@@ -1,0 +1,47 @@
+prefix: '&7[&6Prison&7]'
+missing_permissions: "&4You don't have right to do this."
+not_enough_experience: "&4You don't have enough experience to mine in this area."
+number_expected: "&4Invalid number at argument %0%"
+item_expected: "&4Please hold an item in main hand"
+invalid_player: "&Invalid player at argument %0%"
+enabled: "&aENABLED"
+disabled: "&cDISABLED"
+config:
+  reloaded: '&aConfig Reloaded.'
+  warning: '&8Please note, using reload command deletes session progress.'
+commands:
+  xp: '&a%0%XP'
+  xp_change: '&a%0% &anow has %1%XP'
+  sellall: '&aSold &7%0% &aitems for &7$%1%'
+  showxp: 'Showing gained XP %0%'
+area:
+  locked: '&4Locked'
+  unlocked: '&aUnlocked'
+  current_area_none: '&7Outside mines'
+  enter:
+    enabled: true
+    time: 80
+    title: '&2Entered area %0%'
+    subtitle: '&3%1%XP to mine'
+  setup:
+    name: '&cPlease type new name in the chat.'
+    xp: '&cPlease type new minimal XP in the chat.'
+    unfinished: '&4Please set up every field first'
+    saved: '&aArea saved'
+    deleted: '&cArea deleted'
+items:
+  setup:
+    price: '&cPlease type new amount in the chat.'
+    saved: '&aItem saved'
+    deleted: '&cItem deleted'
+blocks:
+  setup:
+    xp: '&cPlease type new amount in the chat'
+    time: '&cPlease type new time in the chat (in seconds)'
+    saved: '&aBlock saved'
+    deleted: '&cBlock deleted'
+mines-gui:
+  title: '&bMines'
+  itemcolor: 'BLUE'
+  teleport: '&cClick to teleport'
+  xp: '&aUnlocks at %0%XP'

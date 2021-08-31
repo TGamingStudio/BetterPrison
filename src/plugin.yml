@@ -1,0 +1,77 @@
+name: BetterPrison
+version: 1.0.1
+api-version: 1.17
+description: Advanced Prison Plugin
+author: TGamingStudio
+softdepend:
+  - Vault
+  - PlaceholderAPI
+
+main: TGamingStudio.Prison.Prison
+
+commands:
+  prison:
+    description: Main prison command
+  sellall:
+    description: Sell all items in inventory
+  mines:
+    description: See list of mines, teleport.
+  showxp:
+    description: Show or hide XP gains.
+permissions:
+  prison.*:
+    default: op
+    children:
+      - prison.reload
+      - prison.xp.*
+      - prison.setup
+      - prison.mines
+      - prison.showxp
+  prison.reload:
+    description: Reload Config File
+    default: op
+  prison.setup:
+    default: op
+    description: Access to all setup commands
+    children:
+      - prison.area
+      - prison.items
+      - prison.blocks
+  prison.area:
+    description: Create or edit an existing area
+    default: op
+  prison.items:
+    description: Create or edit an existing sellable items
+    default: op
+  prison.blocks:
+    description: Create or edit an existing mineable blocks
+    default: op
+  prison.xp.*:
+    description: Display Xp
+    default: op
+    children:
+      - prison.xp
+      - prison.xp.add
+      - prison.xp.remove
+      - prison.xp.set
+  prison.xp:
+    description: Display Xp
+    default: true
+  prison.xp.add:
+    description: Give Xp
+    default: op
+  prison.xp.remove:
+    description: Remove Xp
+    default: op
+  prison.xp.set:
+    description: Set Xp
+    default: op
+  prison.sellall:
+    description: Sell all items in inventory
+    default: true
+  prison.showxp:
+    description: Show XP gains
+    default: true
+  prison.mines:
+    description: See Mines GUI, Teleport.
+    default: true
