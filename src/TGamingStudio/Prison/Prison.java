@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.util.HashMap;
 
 public class Prison extends JavaPlugin {
     private AreaManager AreaManager;
@@ -47,6 +48,8 @@ public class Prison extends JavaPlugin {
     private Economy Economy;
     private boolean EnabledEconomy;
 
+    Metrics PluginMetrcics;
+
     public void onEnable() {
         AreaManager = new AreaManager(this);
         MineableManager = new MineableManager(this);
@@ -61,7 +64,13 @@ public class Prison extends JavaPlugin {
 
         ShowXP = new ShowXP(this);
 
-        this.saveDefaultConfig();
+        if (getConfig().getBoolean("settings.enable-metrics")) {
+            getLogger().info("Enabling bStats Metrics. You can disable this in config settings.");
+            PluginMetrcics = new Metrics(this, 12665);
+        }
+
+
+        defaultConfig();
 
         getServer().getPluginManager().registerEvents(new MiningEvents(this), this);
         getServer().getPluginManager().registerEvents(new MovingEvents(this), this);
@@ -121,6 +130,18 @@ public class Prison extends JavaPlugin {
         getServer().getOnlinePlayers().stream().map(Entity::getUniqueId).forEach(ProfileManager::LoadProfile);
     }
 
+    //If plugin was updated from an older version, put default values for unexisting config keys
+    public void defaultConfig() {
+        this.saveDefaultConfig();
+        HashMap<String, Object> defaultValues = new HashMap<>();
+        defaultValues.put("settings.enable-metrics", true);
+        defaultValues.put("settings.auto-pickup", true);
+        defaultValues.put("settings.teleport-to-locked", true);
+        for (String Value : defaultValues.keySet())
+            if (getConfig().get(Value) == null)
+                getConfig().set(Value, defaultValues.get(Value));
+    }
+
     public boolean checkForUpade() {
         try {
             URLConnection connection = (new URL("https://api.spigotmc.org/legacy/update.php?resource=95811")).openConnection();
@@ -128,7 +149,7 @@ public class Prison extends JavaPlugin {
             String version = reader.readLine();
             int NewestVersion = Integer.parseInt(version.replace(".", ""));
             int CurrentVersion = Integer.parseInt(getDescription().getVersion().replace(".", ""));
-            if(CurrentVersion < NewestVersion)
+            if (CurrentVersion < NewestVersion)
                 return true;
         } catch (Exception e) {
             e.printStackTrace();

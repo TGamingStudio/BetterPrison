@@ -1,2 +1,4 @@
 settings:
+  enable-metrics: true
   teleport-to-locked: true
+  auto-pickup: true

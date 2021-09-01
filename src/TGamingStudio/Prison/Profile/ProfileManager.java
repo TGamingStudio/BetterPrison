@@ -20,12 +20,13 @@ public class ProfileManager {
     public void LoadProfile(UUID UUID) {
         String prefix = "profile." + UUID.toString();
         if (Config.getConfigurationSection(prefix) == null) {
-            this.profiles.put(UUID, new Profile(UUID, 0));
+            this.profiles.put(UUID, new Profile(UUID, 0, 0));
             SaveProfile(UUID);
             return;
         }
         int Xp = Config.getInt(prefix + ".xp");
-        this.profiles.put(UUID, new Profile(UUID, Xp));
+        int Blocks = Config.getInt(prefix + ".blocks");
+        this.profiles.put(UUID, new Profile(UUID, Xp, Blocks));
     }
 
     public Profile getProfile(UUID uuid) {
@@ -37,6 +38,7 @@ public class ProfileManager {
         Profile profile = getProfile(uuid);
         if(profile == null) return;
         Config.set(prefix + ".xp", profile.getXp());
+        Config.set(prefix + ".blocks", profile.getBlocksMined());
         Prison.saveConfig();
     }
 }

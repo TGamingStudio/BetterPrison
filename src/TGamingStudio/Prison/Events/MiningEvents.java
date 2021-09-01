@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.level.World;
 import net.minecraft.world.phys.Vec3D;
+import org.apache.logging.log4j.core.net.Priority;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -16,10 +17,14 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.Collection;
 
 public class MiningEvents implements Listener {
     Prison Prison;
@@ -28,7 +33,7 @@ public class MiningEvents implements Listener {
         Prison = instance;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void BlockMined(BlockBreakEvent Event) {
         if (Event.getPlayer().getGameMode() != GameMode.SURVIVAL) return;
         Area MiningInArea = Prison.getAreaManager().StandingArea(Event.getBlock().getLocation());
@@ -46,6 +51,11 @@ public class MiningEvents implements Listener {
         if (Prison.getMineableManager().getMineable(Event.getBlock().getType()) != null) {
             int minedXP = Prison.getMineableManager().getMineable(Event.getBlock().getType()).getXp();
             Prison.getProfileManager().getProfile(Event.getPlayer().getUniqueId()).AddXp(minedXP);
+            Prison.getProfileManager().getProfile(Event.getPlayer().getUniqueId()).AddBlockMined();
+            if(Prison.getConfig().getBoolean("settings.auto-pickup")){
+                Event.setDropItems(false);
+                Event.getBlock().getDrops(Event.getPlayer().getInventory().getItemInMainHand()).forEach(Event.getPlayer().getInventory()::addItem);
+            }
             if(Prison.getShowXP().isEnabled(Event.getPlayer()))
                 PlaceHologram(ChatColor.GREEN + "+" + minedXP + "XP", Event.getPlayer(), Event.getBlock().getLocation());
         }
