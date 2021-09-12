@@ -14,7 +14,7 @@ public class MovingEvents implements Listener {
 
     Prison Prison;
 
-    HashMap<UUID, Area> Entered = new HashMap<>();
+    private HashMap<UUID, Area> Entered = new HashMap<>();
 
     public MovingEvents(Prison instance) {
         Prison = instance;
@@ -36,5 +36,9 @@ public class MovingEvents implements Listener {
             }
         } else if (StandingArea == null || StandingArea != Entered.get(Player.getUniqueId()))
             Entered.remove(Player.getUniqueId());
+    }
+
+    public HashMap<UUID, Area> getEntered() {
+        return Entered;
     }
 }

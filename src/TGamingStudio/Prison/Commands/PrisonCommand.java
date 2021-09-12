@@ -142,15 +142,18 @@ public class PrisonCommand implements CommandExecutor {
         return false;
     }
 
+    List<String> UserCommands = Arrays.asList("prison", "prison xp", "sellall", "mines", "showxp");
+    List<String> UserCommandsDescriptions = Arrays.asList("Display this dialog", "Display current XP", "Sell all sellable items in inventory", "Display a menu with all mines", "Show gaining XP");
+    List<String> UserCommandsPermissions = Arrays.asList("NONE", "prison.xp (default)", "prison.sellall (default)", "prison.mines (default)", "prison.showxp (default)");
+
+    List<String> AdminCommands = Arrays.asList("prison reload", "prison xp add <Player> <Amount>", "prison xp remove <Player> <Amount>", "prison xp set <Player> <Amount>", "prison area", "prison items", "prison blocks");
+    List<String> AdminCommandsDescriptions = Arrays.asList("Reloads plugin from config file", "Adds Amount XP to Player", "Takes Amount XP from Player", "Sets Player's XP to Amount", "Displays Area setup dialog", "Displays Sellable items dialog", "Displays Mineable blocks dialog");
+    List<String> AdminCommandsPermissions = Arrays.asList("prison.reload", "prison.xp.add", "prison.xp.remove", "prison.xp.set", "prison.area", "prison.items", "prison.blocks");
     public void HelpMenu(Player Player) {
         TextComponent BaseComponent = new TextComponent(MessageBuilder.Color("&7----------- &6Prison v" + Prison.getDescription().getVersion() + " &7----------"));
 
         TextComponent UserCommandsTitle = new TextComponent(MessageBuilder.Color("\n&f&lUser Commands:"));
         BaseComponent.addExtra(UserCommandsTitle);
-
-        List<String> UserCommands = Arrays.asList("prison", "prison xp", "sellall", "mines");
-        List<String> UserCommandsDescriptions = Arrays.asList("Display this dialog", "Display current XP", "Sell all sellable items in inventory", "Display a menu with all mines");
-        List<String> UserCommandsPermissions = Arrays.asList("NONE", "prison.xp (default)", "prison.sellall (default)", "prison.mines (default)");
         for (int i = 0; i < UserCommands.size(); i++) {
             TextComponent UserCommand = new TextComponent(MessageBuilder.Color("\n&c/" + UserCommands.get(i)));
             UserCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.RED + "Permission: " + UserCommandsPermissions.get(i))));
@@ -161,10 +164,6 @@ public class PrisonCommand implements CommandExecutor {
 
         TextComponent AdminCommandsTitle = new TextComponent(MessageBuilder.Color("\n&f&lAdmin Commands:"));
         BaseComponent.addExtra(AdminCommandsTitle);
-
-        List<String> AdminCommands = Arrays.asList("prison reload", "prison xp add <Player> <Amount>", "prison xp remove <Player> <Amount>", "prison xp set <Player> <Amount>", "prison area", "prison items", "prison blocks");
-        List<String> AdminCommandsDescriptions = Arrays.asList("Reloads plugin from config file", "Adds Amount XP to Player", "Takes Amount XP from Player", "Sets Player's XP to Amount", "Displays Area setup dialog", "Displays Sellable items dialog", "Displays Mineable blocks dialog");
-        List<String> AdminCommandsPermissions = Arrays.asList("prison.reload", "prison.xp.add", "prison.xp.remove", "prison.xp.set", "prison.area", "prison.items", "prison.blocks");
         for (int i = 0; i < AdminCommands.size(); i++) {
             TextComponent AdminCommand = new TextComponent(MessageBuilder.Color("\n&c/" + AdminCommands.get(i)));
             AdminCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.RED + "Permission: " + AdminCommandsPermissions.get(i))));

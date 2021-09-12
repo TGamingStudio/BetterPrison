@@ -10,8 +10,6 @@ import TGamingStudio.Prison.Items.SellableManager;
 import TGamingStudio.Prison.Items.SellableSetup;
 import TGamingStudio.Prison.Util.MessageBuilder;
 import TGamingStudio.Prison.Util.Messages;
-import com.mojang.authlib.minecraft.client.ObjectMapper;
-import com.mojang.brigadier.Message;
 import net.milkbowl.vault.economy.Economy;
 import TGamingStudio.Prison.Area.AreaManager;
 import TGamingStudio.Prison.Commands.PrisonCommand;
@@ -25,12 +23,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.util.HashMap;
 
 public class Prison extends JavaPlugin {
@@ -44,9 +38,11 @@ public class Prison extends JavaPlugin {
     private AreaSetup AreaSetup;
     private SellableSetup SellableSetup;
     private MineableSetup MineableSetup;
-    private ShowXP ShowXP;
     private Economy Economy;
     private boolean EnabledEconomy;
+
+    private ShowXP ShowXP;
+    private MovingEvents MovingEvents;
 
     Metrics PluginMetrcics;
 
@@ -63,6 +59,7 @@ public class Prison extends JavaPlugin {
         MineableSetup = new MineableSetup(this);
 
         ShowXP = new ShowXP(this);
+        MovingEvents = new MovingEvents(this);
 
         if (getConfig().getBoolean("settings.enable-metrics")) {
             getLogger().info("Enabling bStats Metrics. You can disable this in config settings.");
@@ -73,7 +70,7 @@ public class Prison extends JavaPlugin {
         defaultConfig();
 
         getServer().getPluginManager().registerEvents(new MiningEvents(this), this);
-        getServer().getPluginManager().registerEvents(new MovingEvents(this), this);
+        getServer().getPluginManager().registerEvents(MovingEvents, this);
         getServer().getPluginManager().registerEvents(new PlayerEvents(this), this);
         getServer().getPluginManager().registerEvents(new ChatEvents(this), this);
         getServer().getPluginManager().registerEvents(new InventoryEvents(this), this);
@@ -137,22 +134,25 @@ public class Prison extends JavaPlugin {
         defaultValues.put("settings.enable-metrics", true);
         defaultValues.put("settings.auto-pickup", true);
         defaultValues.put("settings.teleport-to-locked", true);
+        defaultValues.put("settings.check-for-updates", true);
         for (String Value : defaultValues.keySet())
             if (getConfig().get(Value) == null)
                 getConfig().set(Value, defaultValues.get(Value));
     }
 
-    public boolean checkForUpade() {
-        try {
-            URLConnection connection = (new URL("https://api.spigotmc.org/legacy/update.php?resource=95811")).openConnection();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String version = reader.readLine();
-            int NewestVersion = Integer.parseInt(version.replace(".", ""));
-            int CurrentVersion = Integer.parseInt(getDescription().getVersion().replace(".", ""));
-            if (CurrentVersion < NewestVersion)
-                return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+    public boolean checkForUpdate() {
+        if (getConfig().getBoolean("settings.check-for-updates")) {
+            try {
+                URLConnection connection = (new URL("https://api.spigotmc.org/legacy/update.php?resource=95811")).openConnection();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String version = reader.readLine();
+                int NewestVersion = Integer.parseInt(version.replace(".", ""));
+                int CurrentVersion = Integer.parseInt(getDescription().getVersion().replace(".", ""));
+                if (CurrentVersion < NewestVersion)
+                    return true;
+            } catch (Exception e) {
+                getLogger().info("There was an error checking for a new version: " + e.getMessage());
+            }
         }
         return false;
     }
@@ -199,6 +199,10 @@ public class Prison extends JavaPlugin {
 
     public ShowXP getShowXP() {
         return ShowXP;
+    }
+
+    public MovingEvents getMovingEvents() {
+        return MovingEvents;
     }
 
     public Economy getEconomy() {

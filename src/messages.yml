@@ -13,11 +13,14 @@ commands:
   xp: '&a%0%XP'
   xp_change: '&a%0% &anow has %1%XP'
   sellall: '&aSold &7%0% &aitems for &7$%1%'
-  showxp: 'Showing gained XP %0%'
+  showxp: '&4Showing gained XP %0%'
 area:
   locked: '&4Locked'
   unlocked: '&aUnlocked'
   current_area_none: '&7Outside mines'
+  max_area_reached: "&4MAX"
+  no_area_unlocked: "&4NONE"
+  invalid_arena_name: "&4Invalid Arena"
   enter:
     enabled: true
     time: 80

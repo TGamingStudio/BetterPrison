@@ -79,6 +79,7 @@ public class AreaSetup {
 
     private void EditArea(Player Player, Area Area) {
         Area.Editing();
+        Area.setOldName();
         SetupAreas.put(Player.getUniqueId(), Area);
     }
 

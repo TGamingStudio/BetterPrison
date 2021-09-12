@@ -1,4 +1,5 @@
 settings:
   enable-metrics: true
+  check-for-updates: true
   teleport-to-locked: true
   auto-pickup: true

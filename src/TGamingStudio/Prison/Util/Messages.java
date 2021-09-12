@@ -7,6 +7,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 public class Messages {
     Prison Prison;
     private File CustomConfigFile;
@@ -22,6 +24,14 @@ public class Messages {
         CustomConfig = new YamlConfiguration();
         try {
             CustomConfig.load(CustomConfigFile);
+            Reader Reader = new InputStreamReader(Prison.getResource("messages.yml"));
+            YamlConfiguration.loadConfiguration(Reader).getKeys(true).forEach(Key -> {
+                if (CustomConfig.get(Key) == null) {
+                    CustomConfig.set(Key, YamlConfiguration.loadConfiguration(new InputStreamReader(Prison.getResource("messages.yml"))).get(Key));
+                    Prison.getLogger().info("Generating missing property in messages.yml config due to an update or being deleted by user (" + Key + ")");
+                }
+            });
+            CustomConfig.save(CustomConfigFile);
         } catch (IOException | InvalidConfigurationException e) {
             Prison.getLogger().info("Invalid Config File. (messages.yml)");
         }
@@ -55,9 +65,13 @@ public class Messages {
     public String ENABLED;
     public String DISABLED;
 
+
     public String AREA_LOCKED;
     public String AREA_UNLOCKED;
-    public String CURRENT_AREA_NONE;
+    public String STANDING_AREA_NONE;
+    public String MAX_AREA_REACHED;
+    public String NO_AREA_UNLOCKED;
+    public String INVALID_ARENA_NAME;
 
     public boolean AREA_ENTER_ENABLED;
     public int AREA_ENTER_TIME;
@@ -100,12 +114,16 @@ public class Messages {
         COMMAND_SELLALL = CustomConfig.getString("commands.sellall");
         COMMAND_SHOWXP = CustomConfig.getString("commands.showxp");
 
-        ENABLED =  CustomConfig.getString("enabled");
-        DISABLED =  CustomConfig.getString("disabled");
+        ENABLED = CustomConfig.getString("enabled");
+        DISABLED = CustomConfig.getString("disabled");
+
 
         AREA_LOCKED = CustomConfig.getString("area.locked");
         AREA_UNLOCKED = CustomConfig.getString("area.unlocked");
-        CURRENT_AREA_NONE = CustomConfig.getString("area.current_area_none");
+        STANDING_AREA_NONE = CustomConfig.getString("area.current_area_none");
+        MAX_AREA_REACHED = CustomConfig.getString("area.max_area_reached");
+        NO_AREA_UNLOCKED = CustomConfig.getString("area.no_area_unlocked");
+        INVALID_ARENA_NAME = CustomConfig.getString("area.invalid_arena_name");
 
         AREA_ENTER_ENABLED = CustomConfig.getBoolean("area.enter.enabled");
         AREA_ENTER_TIME = CustomConfig.getInt("area.enter.time");
@@ -122,10 +140,10 @@ public class Messages {
         ITEMS_SETUP_SAVED = CustomConfig.getString("items.setup.saved");
         ITEMS_SETUP_DELETED = CustomConfig.getString("items.setup.deleted");
 
-        BLOCKS_SETUP_XP =  CustomConfig.getString("blocks.setup.xp");
-        BLOCKS_SETUP_TIME =  CustomConfig.getString("blocks.setup.time");
-        BLOCKS_SETUP_SAVED =  CustomConfig.getString("blocks.setup.saved");
-        BLOCKS_SETUP_DELETED =  CustomConfig.getString("blocks.setup.deleted");
+        BLOCKS_SETUP_XP = CustomConfig.getString("blocks.setup.xp");
+        BLOCKS_SETUP_TIME = CustomConfig.getString("blocks.setup.time");
+        BLOCKS_SETUP_SAVED = CustomConfig.getString("blocks.setup.saved");
+        BLOCKS_SETUP_DELETED = CustomConfig.getString("blocks.setup.deleted");
 
         MINES_GUI_TITLE = CustomConfig.getString("mines-gui.title");
         MINES_GUI_TELEPORT = CustomConfig.getString("mines-gui.teleport");
@@ -133,11 +151,11 @@ public class Messages {
         MINES_GUI_XP = CustomConfig.getString("mines-gui.xp");
     }
 
-    public String getAreaLocked(boolean unlocked){
+    public String getAreaLocked(boolean unlocked) {
         return unlocked ? AREA_UNLOCKED : AREA_LOCKED;
     }
 
-    public String getEnabled(boolean enabled){
+    public String getEnabled(boolean enabled) {
         return enabled ? ENABLED : DISABLED;
     }
 }

@@ -76,9 +76,18 @@ public class Area {
     }
 
     private boolean Edited = false;
+    private String OldName = null;
 
     public void Editing() {
         Edited = true;
+    }
+
+    public String getOldName() {
+        return OldName;
+    }
+
+    public void setOldName() {
+        OldName = Name;
     }
 
     public boolean isEdited() {
@@ -112,6 +121,7 @@ public class Area {
     public void setLoc1(Location newLoc) {
         Loc1 = newLoc;
         World = Loc1.getWorld();
+        CalculateVectors();
     }
 
     public Location getLoc2() {
@@ -120,6 +130,7 @@ public class Area {
 
     public void setLoc2(Location newLoc) {
         Loc2 = newLoc;
+        CalculateVectors();
     }
 
     public Location getTeleport() {
@@ -150,7 +161,7 @@ public class Area {
         return MaterialList;
     }
 
-    public void Teleport(Player Player){
+    public void Teleport(Player Player) {
         Player.teleport(Teleport);
     }
 }

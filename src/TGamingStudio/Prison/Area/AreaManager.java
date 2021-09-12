@@ -1,6 +1,7 @@
 package TGamingStudio.Prison.Area;
 
 import TGamingStudio.Prison.Prison;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -8,7 +9,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class AreaManager {
     private List<Area> Areas = new ArrayList<>();
@@ -53,6 +57,9 @@ public class AreaManager {
 
     public void SaveAreas() {
         for (Area Area : Areas) {
+            if (Area.isEdited())
+                if (Area.getOldName() != null && !Area.getOldName().equals(Area.getName()))
+                    Config.set("areas." + Area.getOldName(), null);
             Config.set("areas." + Area.getName() + ".World", Area.getWorld().getName());
             Config.set("areas." + Area.getName() + ".MinXP", Area.getMinXP());
             Config.set("areas." + Area.getName() + ".Location1", Area.getLoc1());
@@ -73,12 +80,14 @@ public class AreaManager {
         Areas.remove(OldArea);
     }
 
-    public List<Area> getAreas(){
+    public List<Area> getAreas() {
         return Areas;
     }
 
-    public Area getArea(String Name){
-        return Areas.stream().filter(Area -> Area.getName().equals(Name)).findFirst().get();
+    public Area getArea(String Name) {
+        if (Areas.stream().filter(Area -> Area.getName().equals(Name)).findFirst().isPresent())
+            return Areas.stream().filter(Area -> Area.getName().equals(Name)).findFirst().get();
+        else return null;
     }
 
     public Area StandingArea(Location Loc) {
@@ -88,8 +97,43 @@ public class AreaManager {
         return null;
     }
 
-    public boolean isUnlocked(Area Area, Player Player){
+    public boolean isUnlocked(Area Area, Player Player) {
         return Prison.getProfileManager().getProfile(Player.getUniqueId()).getXp() >= Area.getMinXP();
     }
+
+    public List<Area> getUnlockedAreas(Player Player) {
+        return getAreas().stream().filter(Area -> isUnlocked(Area, Player)).collect(Collectors.toList());
+    }
+
+    public List<Area> SortByRequiredXP(List<Area> ToCompare) {
+        return ToCompare.stream().sorted(Comparator.comparingInt(Area::getMinXP)).collect(Collectors.toList());
+    }
+
+    public Area HighestByRequiredXP() {
+        List<Area> Sorted = SortByRequiredXP(getAreas());
+        return Sorted.get(Sorted.size() - 1);
+    }
+
+    public Area NextArea(Player Player) {
+        List<Area> Sorted = SortByRequiredXP(getAreas());
+        List<Area> NotUnlocked = Sorted.subList(getUnlockedAreas(Player).size(), Sorted.size());
+        if (NotUnlocked.size() > 0)
+            return NotUnlocked.get(0);
+        else
+            return null;
+    }
+
+    public Area HighestUnlockedByRequiredXP(Player Player) {
+        List<Area> Sorted = SortByRequiredXP(getUnlockedAreas(Player));
+        return Sorted.get(Sorted.size() - 1);
+    }
+
+    public List<Player> PlayersInArea(Area Area) {
+        List<UUID> UUIDs = Prison.getMovingEvents().getEntered().keySet().stream().filter(PlayerUUID -> Prison.getMovingEvents().getEntered().get(PlayerUUID).equals(Area)).collect(Collectors.toList());
+        List<Player> Players = new ArrayList<>();
+        for (UUID id : UUIDs) Players.add(Bukkit.getPlayer(id));
+        return Players;
+    }
+
 
 }
